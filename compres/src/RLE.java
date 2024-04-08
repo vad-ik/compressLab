@@ -6,11 +6,12 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Scanner;
 
-public class Compress {
+public class RLE {
 
     static String noCompressionPath = "noCompression.txt";
     static String deCompressionPath = "deCompression.txt";
     static String compressionPath = "Compression.txt";
+
 
     public  StringBuilder avtoCompress(StringBuilder str){
 
@@ -128,7 +129,37 @@ public class Compress {
         }
         Compression(arr, Objects.equals(strInput, "изображение"));
     }
+   StringBuilder compressionFotoToStr (StringBuilder data){
+       Boolean oneChar = false;
+       StringBuilder writer = new StringBuilder();
 
+
+       int amount = 1;
+       for (int i = 0; i < data.length() - 7; i+=4) {
+
+
+           if (data.charAt(i) == data.charAt(i+4) && data.charAt(i+1) == data.charAt(i+4+1) &&
+                   data.charAt(i+2) == data.charAt(i+4+2) && data.charAt(i+3) == data.charAt(i+4+3) &&
+                   amount < Math.pow(2,16)) {
+               amount++;
+           } else {
+
+                   writer.append((char) amount);
+                   for (int j = 0; j <4 ; j++) {
+                       writer.append((data.charAt(i+j)));
+                   }
+               amount = 1;
+
+           }
+       }
+
+
+           writer.append((char) amount);
+       for (int j = 4; j >0 ; j--) {
+           writer.append((data.charAt(data.length() -j)));
+       }
+       return writer;
+   }
     public static void Compression(int[] data, boolean foto) {
         try {
 

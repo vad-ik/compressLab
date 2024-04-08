@@ -2,11 +2,11 @@ import java.util.Arrays;
 
 public class BWTFast {
     StringBuilder getBWT(String s) {
-        s+="$";
-        StringBuilder bwt=new StringBuilder();
-        int[] suffixArray= compress( s);
+        s += "$";
+        StringBuilder bwt = new StringBuilder();
+        int[] suffixArray = compress(s);
         for (int i : suffixArray) {
-           int j = i - 1;
+            int j = i - 1;
             if (j < 0) {
                 j += suffixArray.length;
             }
@@ -14,6 +14,7 @@ public class BWTFast {
         }
         return bwt;
     }
+
 
     int[] compress(String s){
 
@@ -59,7 +60,6 @@ public class BWTFast {
         for (int i = 0; i < N; i++) {
             suffixArray[i] = tuples[i].originalIndex;
         }
-
         return suffixArray;
     }
 

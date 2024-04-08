@@ -1,7 +1,12 @@
 public class LZ77 {
     int dictionary = 32000;
 
+    int st1=0;
+    int ln1=0;
+    int st2=0;
+    int ln2=0;
     public StringBuilder compress(String str) {
+
         int size = str.length();
         StringBuilder strCompress = new StringBuilder();
         StringBuilder memory = new StringBuilder();
@@ -27,11 +32,23 @@ public class LZ77 {
                 }
             }
             type = type << 1;
-            if (dictionaryLeng > 0) {//запись из словаря
+            if (dictionaryLeng > 1) {//запись из словаря
                 memory.append((char) dictionaryStart);
                 memory.append((char) dictionaryLeng);
                type++;
                 i+=dictionaryLeng-1;
+
+                if (dictionaryLeng>127){
+                     ln2++;
+                }else {
+                    ln1++;
+                }
+                if (dictionaryStart>127){
+                    st2++;
+                }else {
+                    st1++;
+                }
+
             } else {//обычная запись
                 memory.append(str.charAt(i));
              }

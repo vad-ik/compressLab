@@ -1,9 +1,7 @@
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.Scanner;
 
 
 public class Main {
@@ -17,7 +15,9 @@ public class Main {
         StringBuilder str7 = new StringBuilder();
         String path8 = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\1\\compres\\enwik8";
         String path7 = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\1\\compres\\enwik7.txt";
-        try {
+        String pathFwb = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\1\\compres\\pathFwb.jpg";
+        String pathFColor = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\1\\compres\\pathFColor.jpg";
+         try {
             FileReader reader8 = new FileReader(new File(path8));
             FileReader reader7 = new FileReader(new File(path7));
             int c;
@@ -37,82 +37,27 @@ public class Main {
         System.out.println();
 
         Huffman huffman = new Huffman();
-        Compress rle = new Compress();
+        RLE rle = new RLE();
         LZ77 lz77 = new LZ77();
         BWTFast burrowsWheeler = new BWTFast();
         MTF mtf = new MTF();
-        ArithmeticInt arithmetic = new ArithmeticInt();
+        ArithmeticCoding arithmetic = new ArithmeticCoding();
+        Burrows_Wheeler urrowsWheeler=new Burrows_Wheeler();
+        StringBuilder out = new StringBuilder();
+        StringBuilder out2 = new StringBuilder();
+        StringBuilder outLZ = new StringBuilder();
+        StringBuilder outLZ2 = new StringBuilder();
+        StringBuilder bwt = new StringBuilder();
+        StringBuilder bwt2 = new StringBuilder();
 
-
-       statsBwt(str8,burrowsWheeler,rle);
-
-//        out=(lz77.compress(String.valueOf(str8)));
-//        out2=(lz77.compress(String.valueOf(str7)));
-//        System.out.println("конец lz77");
-//        System.out.println(System.currentTimeMillis()-start);
-//        System.out.println();
-//        System.out.println(str8.length());
-//        for (int i = 0; i <str8.length() ; i+=10000000) {
-//            out.append(burrowsWheeler.getBWT((str8).substring(i,Math.min(str8.length() ,i+10000000))));
-//        }
-//        out2.append(burrowsWheeler.getBWT(String.valueOf(str7)));
-//        System.out.println("конец бвт");
-//        System.out.println(System.currentTimeMillis() - start);
-//        System.out.println();
-//        StringBuilder outBWT=new StringBuilder(out);
-//        StringBuilder outBWT2=new StringBuilder(out2);
-////
-//        outBWT = mtf.compress(outBWT.toString());
-//        outBWT2 = mtf.compress(outBWT2.toString());
-//        System.out.println("конец мтф");
-//        System.out.println(System.currentTimeMillis()-start);
-//        System.out.println();
-////
-////
-////
-//        out = rle.avtoCompress(out);
-//        out2 = rle.avtoCompress(out2);
-//        System.out.println("конец рле");
-//        System.out.println(System.currentTimeMillis()-start);
-//        System.out.println();
-////
-//
-//        StringBuilder outBWT_MTF_RLE=new StringBuilder(outBWT);
-//        StringBuilder outBWT_MTF_RLE2=new StringBuilder(outBWT2);
-//
-//        outBWT_MTF_RLE = rle.avtoCompress(outBWT_MTF_RLE);
-//        outBWT_MTF_RLE2 = rle.avtoCompress(outBWT_MTF_RLE2);
-//        System.out.println("конец рле");
-//        System.out.println(System.currentTimeMillis()-start);
-//        System.out.println();
-//
-//        huffman.codingInFile(String.valueOf(outBWT), "enwic8CompressBWT_MTF_HA");
-//        huffman.codingInFile(outBWT2.toString(), "enwic7CompressBWT_MTF_HA");
-//        System.out.println("конец хафмана");
-//        System.out.println(System.currentTimeMillis()-start);
-//        System.out.println();
-//
-//        huffman.codingInFile(String.valueOf(outBWT_MTF_RLE), "enwic8CompressBWT_MTF_RLE_HA");
-//        huffman.codingInFile(outBWT_MTF_RLE2.toString(), "enwic7CompressBWT_MTF_RLE_HA");
-//        System.out.println("конец хафмана");
-//        System.out.println(System.currentTimeMillis()-start);
-//        System.out.println();
-//
-//        //   out=arithmetic.compress( out);
-//        //  out2=arithmetic.compress(new StringBuilder(out2));
-//
-////        System.out.println("конец AC");
-////        System.out.println(System.currentTimeMillis()-start);
-////        System.out.println();
-//
-//        toFile(out,"enwic8CompressBWT_RLE");
-//        toFile(out2,"enwic7CompressBWT_RLE");
+       statsLz(str7,lz77);
+      //  toFile(lz77.deCompress(str7), "lz77testqqqqqqqqqqqq" );
     }
-static void statsBwt(StringBuilder str8, BWTFast burrowsWheeler, Compress rle){
+
+static void statsBwt(StringBuilder str8, BWTFast burrowsWheeler, RLE rle){
     System.out.println("оценка бвт");
     StringBuilder out = new StringBuilder();
-    StringBuilder out2 = new StringBuilder();
-    for (int i = 10000; i < 10000000; i+=10000) {
+    for (int i = 10000000; i <= 10000000; i+=1000000) {
 
         Long startt = System.currentTimeMillis();
         System.out.print(i+" time: ");
@@ -125,6 +70,25 @@ static void statsBwt(StringBuilder str8, BWTFast burrowsWheeler, Compress rle){
         System.out.println(System.currentTimeMillis()-startt);
     }
 }
+
+    static void statsLz(StringBuilder str, LZ77 lz77){
+        System.out.println("оценка LZ77");
+        for (int i = 2113; i <= 4000; i+=5) {
+
+            Long startt = System.currentTimeMillis();
+            System.out.print(i+" ");
+            lz77.dictionary=i;
+            lz77.st1=0;
+            lz77.ln1=0;
+            lz77.st2=0;
+            lz77.ln2=0;
+
+            lz77.compress(String.valueOf(str));
+            System.out.println(""+lz77.st1+" "+lz77.ln1+" "+lz77.st2+" "+lz77.ln2);
+
+            //  System.out.println(System.currentTimeMillis()-startt);
+        }
+    }
     static void toFile(StringBuilder str, String path) {
         try {
             FileWriter writer = new FileWriter(path, false);
@@ -136,6 +100,36 @@ static void statsBwt(StringBuilder str8, BWTFast burrowsWheeler, Compress rle){
             throw new RuntimeException(e);
         }
     }
+    public static StringBuilder getFoto(String Path){
+        StringBuilder str=new StringBuilder();
 
+          BufferedImage in;
+
+            try {
+                in = ImageIO.read(new File(Path));
+                ImageIO.write(in, "png", new File("imageOriginal.bmp"));
+
+                int height = in.getHeight();
+                int width = in.getWidth();
+                str.append( (char)(width));
+                str.append( (char)(height));
+
+                for (int i = 0; i < height; i++) {
+                    for (int j = 0; j < width; j++) {
+                        int color=in.getRGB(j, i);
+                        for (int k = 0; k <4 ; k++) {
+                            str.append( (char)(color%256));
+                            color>>=8;
+                        }
+
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("ошибка файла");
+                throw new RuntimeException(e);
+            }
+
+return str;
+    }
 
 }
