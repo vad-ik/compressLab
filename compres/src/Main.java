@@ -13,10 +13,8 @@ public class Main {
         Long start = System.currentTimeMillis();
         StringBuilder str8 = new StringBuilder();
         StringBuilder str7 = new StringBuilder();
-        String path8 = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\1\\compres\\enwik8";
-        String path7 = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\1\\compres\\enwik7.txt";
-        String pathFwb = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\1\\compres\\pathFwb.jpg";
-        String pathFColor = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\1\\compres\\pathFColor.jpg";
+        String path8 = "\\enwik8";
+        String path7 = "\\enwik7.txt";
          try {
             FileReader reader8 = new FileReader(new File(path8));
             FileReader reader7 = new FileReader(new File(path7));
@@ -42,16 +40,12 @@ public class Main {
         BWTFast burrowsWheeler = new BWTFast();
         MTF mtf = new MTF();
         ArithmeticCoding arithmetic = new ArithmeticCoding();
-        Burrows_Wheeler urrowsWheeler=new Burrows_Wheeler();
+        Burrows_Wheeler bwt=new Burrows_Wheeler();
         StringBuilder out = new StringBuilder();
-        StringBuilder out2 = new StringBuilder();
-        StringBuilder outLZ = new StringBuilder();
-        StringBuilder outLZ2 = new StringBuilder();
-        StringBuilder bwt = new StringBuilder();
-        StringBuilder bwt2 = new StringBuilder();
 
-       statsLz(str7,lz77);
-      //  toFile(lz77.deCompress(str7), "lz77testqqqqqqqqqqqq" );
+
+
+
     }
 
 static void statsBwt(StringBuilder str8, BWTFast burrowsWheeler, RLE rle){

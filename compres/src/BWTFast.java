@@ -17,19 +17,13 @@ public class BWTFast {
 
 
     int[] compress(String s){
-
         int N = s.length();
-
         int steps = Integer.bitCount(Integer.highestOneBit(N) - 1);
-
-        int rank[][] = new int[steps + 1][N];
-
+        int[][] rank = new int[steps + 1][N];
         for (int i = 0; i < N; i++) {
             rank[0][i] = s.charAt(i) - 'a';
         }
-
-        Tuple tuples[] = new Tuple[N];
-
+        Tuple[] tuples = new Tuple[N];
         for (int step = 1, cnt = 1; step <= steps; step++, cnt <<= 1) {
             for (int i = 0; i < N; i++) {
                 Tuple tuple = new Tuple();
@@ -39,7 +33,6 @@ public class BWTFast {
 
                 tuples[i] = tuple;
             }
-
             Arrays.sort(tuples);
 
             rank[step][tuples[0].originalIndex] = 0;
@@ -55,7 +48,7 @@ public class BWTFast {
 
         }
 
-        int suffixArray[] = new int[N];
+        int[] suffixArray = new int[N];
 
         for (int i = 0; i < N; i++) {
             suffixArray[i] = tuples[i].originalIndex;
