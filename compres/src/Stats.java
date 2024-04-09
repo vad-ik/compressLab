@@ -20,8 +20,8 @@ public class Stats {
             if (!alphabet.contains(str.charAt(i))) {
                 alphabet.add(str.charAt(i));
             }
-            Collections.sort(alphabet);
         }
+        Collections.sort(alphabet);
     }
     public static void entropi(HashMap<Character, Integer> charRate,ArrayList<Character> alphabet){
         double sum=0;

@@ -13,9 +13,9 @@ public class Main {
         Long start = System.currentTimeMillis();
         StringBuilder str8 = new StringBuilder();
         StringBuilder str7 = new StringBuilder();
-        String path8 = "\\enwik8";
-        String path7 = "\\enwik7.txt";
-         try {
+        String path8 = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\lab_1_compress\\enwik8";
+        String path7 = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\lab_1_compress\\enwik7.txt";
+        try {
             FileReader reader8 = new FileReader(new File(path8));
             FileReader reader7 = new FileReader(new File(path7));
             int c;
@@ -40,49 +40,65 @@ public class Main {
         BWTFast burrowsWheeler = new BWTFast();
         MTF mtf = new MTF();
         ArithmeticCoding arithmetic = new ArithmeticCoding();
-        Burrows_Wheeler bwt=new Burrows_Wheeler();
+        Burrows_Wheeler bwt = new Burrows_Wheeler();
+
         StringBuilder out = new StringBuilder();
+       StringBuilder out7 = new StringBuilder();
 
-
-
-
-    }
-
-static void statsBwt(StringBuilder str8, BWTFast burrowsWheeler, RLE rle){
-    System.out.println("оценка бвт");
-    StringBuilder out = new StringBuilder();
-    for (int i = 10000000; i <= 10000000; i+=1000000) {
-
-        Long startt = System.currentTimeMillis();
-        System.out.print(i+" time: ");
-        out = new StringBuilder();
-        for (int j = 0; j < str8.length(); j += i) {
-            out.append(burrowsWheeler.getBWT((str8).substring(j, Math.min(str8.length(), j + i))));
+        for (int j = 0; j < str8.length(); j += 10000000) {
+            out.append(burrowsWheeler.getBWT((str8).substring(j, Math.min(str8.length(), j + 10000000))));
         }
-        out = rle.avtoCompress(out);
-        toFile(out, "enwic8TestSizeBWT_RLE" + i);
-        System.out.println(System.currentTimeMillis()-startt);
-    }
-}
+        out7.append(burrowsWheeler.getBWT(String.valueOf(str7)));
+        System.out.println("bwt");
+        out=mtf.compress(String.valueOf(out)) ;
+        out7=mtf.compress(String.valueOf(out7)) ;
+        System.out.println("mtf");
 
-    static void statsLz(StringBuilder str, LZ77 lz77){
-        System.out.println("оценка LZ77");
-        for (int i = 2113; i <= 4000; i+=5) {
+        huffman.codingInFile(String.valueOf(out),"BWT_MTF_ha");
+        huffman.codingInFile(String.valueOf(out7),"BWT_MTF_ha7");
+        System.out.println("ha");
+
+        out= rle.avtoCompress(out);
+        out7= rle.avtoCompress(out7);
+        System.out.println("rle");
+
+        huffman.codingInFile(String.valueOf(out),"BWT_MTF_RLE_ha");
+        huffman.codingInFile(String.valueOf(out7),"BWT_MTF_RLEha7");
+        System.out.println("ha");
+
+    }
+
+    static void statsBwt(StringBuilder str8, BWTFast burrowsWheeler, RLE rle) {
+        System.out.println("оценка бвт");
+        StringBuilder out = new StringBuilder();
+        for (int i = 10000000; i <= 10000000; i += 1000000) {
 
             Long startt = System.currentTimeMillis();
-            System.out.print(i+" ");
-            lz77.dictionary=i;
-            lz77.st1=0;
-            lz77.ln1=0;
-            lz77.st2=0;
-            lz77.ln2=0;
+            System.out.print(i + " time: ");
+            out = new StringBuilder();
+            for (int j = 0; j < str8.length(); j += i) {
+                out.append(burrowsWheeler.getBWT((str8).substring(j, Math.min(str8.length(), j + i))));
+            }
+            out = rle.avtoCompress(out);
+            toFile(out, "enwic8TestSizeBWT_RLE" + i);
+            System.out.println(System.currentTimeMillis() - startt);
+        }
+    }
 
-            lz77.compress(String.valueOf(str));
-            System.out.println(""+lz77.st1+" "+lz77.ln1+" "+lz77.st2+" "+lz77.ln2);
+    static void statsLz(StringBuilder str, LZ77 lz77) {
+        System.out.println("оценка LZ77");
+        for (int i = 0; i <= 65530; i += 1) {
+
+            Long startt = System.currentTimeMillis();
+            System.out.print(i + " ");
+            lz77.dictionary = i;
+
+            toFile(lz77.compress(String.valueOf(str)), "lz" + i);
 
             //  System.out.println(System.currentTimeMillis()-startt);
         }
     }
+
     static void toFile(StringBuilder str, String path) {
         try {
             FileWriter writer = new FileWriter(path, false);
@@ -94,36 +110,37 @@ static void statsBwt(StringBuilder str8, BWTFast burrowsWheeler, RLE rle){
             throw new RuntimeException(e);
         }
     }
-    public static StringBuilder getFoto(String Path){
-        StringBuilder str=new StringBuilder();
 
-          BufferedImage in;
+    public static StringBuilder getFoto(String Path) {
+        StringBuilder str = new StringBuilder();
 
-            try {
-                in = ImageIO.read(new File(Path));
-                ImageIO.write(in, "png", new File("imageOriginal.bmp"));
+        BufferedImage in;
 
-                int height = in.getHeight();
-                int width = in.getWidth();
-                str.append( (char)(width));
-                str.append( (char)(height));
+        try {
+            in = ImageIO.read(new File(Path));
+            ImageIO.write(in, "png", new File("imageOriginal.bmp"));
 
-                for (int i = 0; i < height; i++) {
-                    for (int j = 0; j < width; j++) {
-                        int color=in.getRGB(j, i);
-                        for (int k = 0; k <4 ; k++) {
-                            str.append( (char)(color%256));
-                            color>>=8;
-                        }
+            int height = in.getHeight();
+            int width = in.getWidth();
+            str.append((char) (width));
+            str.append((char) (height));
 
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    int color = in.getRGB(j, i);
+                    for (int k = 0; k < 4; k++) {
+                        str.append((char) (color % 256));
+                        color >>= 8;
                     }
-                }
-            } catch (IOException e) {
-                System.out.println("ошибка файла");
-                throw new RuntimeException(e);
-            }
 
-return str;
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("ошибка файла");
+            throw new RuntimeException(e);
+        }
+
+        return str;
     }
 
 }

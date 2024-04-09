@@ -124,9 +124,9 @@ public class Huffman {
             }
 
             int i = 0;
-            while (i + 8 <= output.length()) {
+            while (i + 16 <= output.length()) {
                 int myChar = 0;
-                for (int j = 0; j < 8; j++, i++) {
+                for (int j = 0; j < 16; j++, i++) {
                     myChar = myChar << 1;
                     myChar += output.charAt(i) == '1' ? 1 : 0;
                 }

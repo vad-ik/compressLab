@@ -1,10 +1,7 @@
 public class LZ77 {
-    int dictionary = 32000;
+    int dictionary = 65530;
 
-    int st1=0;
-    int ln1=0;
-    int st2=0;
-    int ln2=0;
+
     public StringBuilder compress(String str) {
 
         int size = str.length();
@@ -38,23 +35,13 @@ public class LZ77 {
                type++;
                 i+=dictionaryLeng-1;
 
-                if (dictionaryLeng>127){
-                     ln2++;
-                }else {
-                    ln1++;
-                }
-                if (dictionaryStart>127){
-                    st2++;
-                }else {
-                    st1++;
-                }
 
             } else {//обычная запись
                 memory.append(str.charAt(i));
              }
             charCoded++;
 
-            if (charCoded == 8) {
+            if (charCoded == 16) {
                 strCompress.append((char) type);//запишим типы кодов
                 charCoded = 0;
                 type = 0;
@@ -64,7 +51,7 @@ public class LZ77 {
             }
         }
         if (charCoded != 0) {
-            type = type << 8 - charCoded;//чтобы при дешифрации не было особого случая
+            type = type << 16 - charCoded;//чтобы при дешифрации не было особого случая
             strCompress.append((char) type);//запишим типы кодов
 
             strCompress.append(memory);
@@ -81,7 +68,7 @@ public class LZ77 {
         while (!strEnd && j < size) {
             int types = str.charAt(j);
             j++;
-            for (int i = 7; i >= 0 && !strEnd; i--, j++) {
+            for (int i = 15; i >= 0 && !strEnd; i--, j++) {
 
 
                 if (j < size) {
