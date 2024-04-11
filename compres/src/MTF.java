@@ -5,9 +5,9 @@ import java.util.Collections;
 
 public class MTF {
     public StringBuilder compress(String str) {
-        ArrayList<Character> alphabet = new ArrayList<>();
+        ArrayList<Character> alphabet = Stats.getAlphabet(str);
         ArrayList<Integer> strOut = new ArrayList<>();
-        Stats.getAlphabet(str, alphabet);
+
         for (int i = 0; i < str.length(); i++) {
             int j = 0;
             while ( str.charAt(i)!=alphabet.get(j) ) { j++;}

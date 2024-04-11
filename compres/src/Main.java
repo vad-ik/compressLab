@@ -42,29 +42,52 @@ public class Main {
         ArithmeticCoding arithmetic = new ArithmeticCoding();
         Burrows_Wheeler bwt = new Burrows_Wheeler();
 
-        StringBuilder out = new StringBuilder();
-       StringBuilder out7 = new StringBuilder();
+        StringBuilder s = new StringBuilder();
+       // str7=new StringBuilder(str7.substring(0,100));
 
-        for (int j = 0; j < str8.length(); j += 10000000) {
-            out.append(burrowsWheeler.getBWT((str8).substring(j, Math.min(str8.length(), j + 10000000))));
+        int size = 1000;
+        for (int j = 0; j < str7.length(); j += size) {
+            if (j % 10000 == 0) {
+                System.out.println(j);
+                System.gc();
+            }
+            s.append(arithmetic.bigDecCompress((str7).substring(j, Math.min(str7.length(), j + size))));
         }
-        out7.append(burrowsWheeler.getBWT(String.valueOf(str7)));
-        System.out.println("bwt");
-        out=mtf.compress(String.valueOf(out)) ;
-        out7=mtf.compress(String.valueOf(out7)) ;
-        System.out.println("mtf");
+        toFile(s, "ac7");
+        System.out.println("конец ac");
+        System.out.println(System.currentTimeMillis() - start);
+        s.deleteCharAt(s.length() - 1);
+        StringBuilder decompr = new StringBuilder();
+        for (String s1 : s.toString().split("" + arithmetic.endCHRM)) {
 
-        huffman.codingInFile(String.valueOf(out),"BWT_MTF_ha");
-        huffman.codingInFile(String.valueOf(out7),"BWT_MTF_ha7");
-        System.out.println("ha");
+            decompr.append(arithmetic.bigDecDecompress(s1));
+        }
+        toFile(decompr, "Deac7");
 
-        out= rle.avtoCompress(out);
-        out7= rle.avtoCompress(out7);
-        System.out.println("rle");
 
-        huffman.codingInFile(String.valueOf(out),"BWT_MTF_RLE_ha");
-        huffman.codingInFile(String.valueOf(out7),"BWT_MTF_RLEha7");
-        System.out.println("ha");
+//        StringBuilder out = new StringBuilder();
+//       StringBuilder out7 = new StringBuilder();
+//
+//        for (int j = 0; j < str8.length(); j += 10000000) {
+//            out.append(burrowsWheeler.getBWT((str8).substring(j, Math.min(str8.length(), j + 10000000))));
+//        }
+//        out7.append(burrowsWheeler.getBWT(String.valueOf(str7)));
+//        System.out.println("bwt");
+//        out=mtf.compress(String.valueOf(out)) ;
+//        out7=mtf.compress(String.valueOf(out7)) ;
+//        System.out.println("mtf");
+//
+//        huffman.codingInFile(String.valueOf(out),"BWT_MTF_ha");
+//        huffman.codingInFile(String.valueOf(out7),"BWT_MTF_ha7");
+//        System.out.println("ha");
+//
+//        out= rle.avtoCompress(out);
+//        out7= rle.avtoCompress(out7);
+//        System.out.println("rle");
+//
+//        huffman.codingInFile(String.valueOf(out),"BWT_MTF_RLE_ha");
+//        huffman.codingInFile(String.valueOf(out7),"BWT_MTF_RLEha7");
+//        System.out.println("ha");
 
     }
 

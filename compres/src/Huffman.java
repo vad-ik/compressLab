@@ -124,9 +124,9 @@ public class Huffman {
             }
 
             int i = 0;
-            while (i + 16 <= output.length()) {
+            while (i + 15 <= output.length()) {
                 int myChar = 0;
-                for (int j = 0; j < 16; j++, i++) {
+                for (int j = 0; j < 15; j++, i++) {
                     myChar = myChar << 1;
                     myChar += output.charAt(i) == '1' ? 1 : 0;
                 }
@@ -141,7 +141,7 @@ public class Huffman {
                 myChar += output.charAt(i) == '1' ? 1 : 0;
             }
 
-            writer.append((char) myChar);
+            if (myChar>0){writer.append((char) myChar);}
             writer.flush();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
@@ -180,10 +180,10 @@ public class Huffman {
             StringBuilder strDeCompress = new StringBuilder();
             int last=0;
             while ((c = reader.read()) != -1) {
-                strBinarDeCompress.append(String.format("%8s", Integer.toBinaryString(c)).replace(' ', '0'));
+                strBinarDeCompress.append(String.format("%15s", Integer.toBinaryString(c)).replace(' ', '0'));
                 last=c;
             }
-            strBinarDeCompress.delete(strBinarDeCompress.length()-8,strBinarDeCompress.length());
+            strBinarDeCompress.delete(strBinarDeCompress.length()-15,strBinarDeCompress.length());
 
             strBinarDeCompress.append(Integer.toBinaryString(last));
             StringBuilder code = new StringBuilder();
