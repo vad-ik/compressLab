@@ -14,7 +14,10 @@ public class Main {
         StringBuilder str8 = new StringBuilder();
         StringBuilder str7 = new StringBuilder();
         String path8 = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\lab_1_compress\\enwik8";
+      //  path8 = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\lab1\\imageOriginal.bmp";
         String path7 = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\lab_1_compress\\enwik7.txt";
+        // path7 = "C:\\Users\\DarkCat\\Desktop\\отчёты Хорошков Вадим\\2 курс\\4 сем\\алгоритмы\\lab1\\1648085697_1-kartinkin-net-p-milie-kartinki-chb-1.jpg";
+
         try {
             FileReader reader8 = new FileReader(new File(path8));
             FileReader reader7 = new FileReader(new File(path7));
@@ -42,52 +45,40 @@ public class Main {
         ArithmeticCoding arithmetic = new ArithmeticCoding();
         Burrows_Wheeler bwt = new Burrows_Wheeler();
 
-        StringBuilder s = new StringBuilder();
-       // str7=new StringBuilder(str7.substring(0,100));
-
-        int size = 1000;
-        for (int j = 0; j < str7.length(); j += size) {
-            if (j % 10000 == 0) {
-                System.out.println(j);
-                System.gc();
-            }
-            s.append(arithmetic.bigDecCompress((str7).substring(j, Math.min(str7.length(), j + size))));
-        }
-        toFile(s, "ac7");
-        System.out.println("конец ac");
-        System.out.println(System.currentTimeMillis() - start);
-        s.deleteCharAt(s.length() - 1);
-        StringBuilder decompr = new StringBuilder();
-        for (String s1 : s.toString().split("" + arithmetic.endCHRM)) {
-
-            decompr.append(arithmetic.bigDecDecompress(s1));
-        }
-        toFile(decompr, "Deac7");
-
-
-//        StringBuilder out = new StringBuilder();
-//       StringBuilder out7 = new StringBuilder();
+//       str8= getFoto(path8);
+//        str7= getFoto(path7);
 //
-//        for (int j = 0; j < str8.length(); j += 10000000) {
-//            out.append(burrowsWheeler.getBWT((str8).substring(j, Math.min(str8.length(), j + 10000000))));
-//        }
-//        out7.append(burrowsWheeler.getBWT(String.valueOf(str7)));
-//        System.out.println("bwt");
-//        out=mtf.compress(String.valueOf(out)) ;
-//        out7=mtf.compress(String.valueOf(out7)) ;
-//        System.out.println("mtf");
+//        toFile(rle.compressionFotoToStr(str8),"rleFoto8");
+//        toFile(rle.compressionFotoToStr(str7),"rleFoto7");
 //
-//        huffman.codingInFile(String.valueOf(out),"BWT_MTF_ha");
-//        huffman.codingInFile(String.valueOf(out7),"BWT_MTF_ha7");
-//        System.out.println("ha");
+//        System.out.println("rleEnd");
 //
-//        out= rle.avtoCompress(out);
-//        out7= rle.avtoCompress(out7);
-//        System.out.println("rle");
 //
-//        huffman.codingInFile(String.valueOf(out),"BWT_MTF_RLE_ha");
-//        huffman.codingInFile(String.valueOf(out7),"BWT_MTF_RLEha7");
-//        System.out.println("ha");
+//        toFile(rle.avtoCompress(burrowsWheeler.getBWT(String.valueOf(str8))),"BWTrleFoto8vv");
+//        toFile(rle.avtoCompress(burrowsWheeler.getBWT(String.valueOf(str7))),"BWTrleFoto7vv");
+//
+//        System.out.println("BWTrleEnd");
+        StringBuilder Out7=lz77.compress(String.valueOf(str7));
+        StringBuilder Out8=lz77.compress(String.valueOf(str8));
+        toFile(Out8,"lz8");
+        toFile(Out7,"lz7");
+        System.out.println("lzEnd");
+        huffman.codingInFile(String.valueOf(Out7),"lz7Ha");
+        huffman.codingInFile(String.valueOf(Out8),"lz8Ha");
+        System.out.println("haEnd");
+//        huffman.codingInFile(String.valueOf(str7),"7Ha");
+//        huffman.codingInFile(String.valueOf(str8),"8Ha");
+//        System.out.println("haEnd");
+//
+//        Out7=mtf.compress(String.valueOf(burrowsWheeler.getBWT(String.valueOf(str7))));
+//        Out8=mtf.compress(String.valueOf(burrowsWheeler.getBWT(String.valueOf(str8))));
+//
+//        huffman.codingInFile(String.valueOf(Out7),"bwtMtf7Ha");
+//        huffman.codingInFile(String.valueOf(Out8),"bwtMtf8Ha");
+//
+//
+//        huffman.codingInFile(String.valueOf(rle.avtoCompress((Out7))),"bwtMtfRLE7Ha");
+//        huffman.codingInFile(String.valueOf(rle.avtoCompress((Out8))),"bwtMtfRLe8Ha");
 
     }
 
@@ -108,9 +99,9 @@ public class Main {
         }
     }
 
-    static void statsLz(StringBuilder str, LZ77 lz77) {
+    static void statsLz(StringBuilder str, LZ77 lz77,int start,int step, int finish) {
         System.out.println("оценка LZ77");
-        for (int i = 0; i <= 65530; i += 1) {
+        for (int i = start; i <= finish; i += step) {
 
             Long startt = System.currentTimeMillis();
             System.out.print(i + " ");

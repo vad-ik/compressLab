@@ -8,9 +8,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Huffman {
+    Long start;
+
     public HashMap<Character, String> getCodeTree(String str) {
 
-        HashMap<Character, String> charCode ;
+        HashMap<Character, String> charCode;
 
         ArrayList<HuffmanTreeNode> charRate = new ArrayList<>();
         for (int i = 0; i < str.length(); i++) {
@@ -28,9 +30,49 @@ public class Huffman {
         }
         Collections.sort(charRate);
         charCode = getCharCode(charRate);
-       //  canonicalHuffmanCodesForCharCode(charCode);
+        //  canonicalHuffmanCodesForCharCode(charCode);
         return charCode;
 
+    }
+
+    public HashMap<Character, Integer> getCodeLengForTree(String str) {
+
+        HashMap<Character, Integer> charCode;
+
+        HashMap<Character, Integer> charRate = new HashMap<>();
+
+        for (int i = 0; i < str.length(); i++) {
+            if (charRate.get(str.charAt(i)) == null) {
+                charRate.put(str.charAt(i), 1);
+            } else {
+                charRate.put(str.charAt(i), charRate.get(str.charAt(i)) + 1);
+            }
+        }
+        ArrayList<HuffmanTreeNode> charRateTreeNode = new ArrayList<>();
+
+        for (Character character : charRate.keySet()) {
+            charRateTreeNode.add(new HuffmanTreeNode(character + "", charRate.get(character)));
+        }
+        Collections.sort(charRateTreeNode);
+        charCode = getCharLeng(charRateTreeNode);
+        //  canonicalHuffmanCodesForCharCode(charCode);
+        return charCode;
+
+    }
+
+    public HashMap<Character, Integer> getCharLeng(ArrayList<HuffmanTreeNode> charRate) {
+        while (charRate.size() > 1) {
+            HuffmanTreeNode newNode = new HuffmanTreeNode(charRate.get(0), charRate.get(1));
+            charRate.remove(0);
+            charRate.remove(0);
+
+            charRate.add(newNode);
+            Collections.sort(charRate);
+
+        }
+        HashMap<Character, Integer> charCode = new HashMap<>();
+        lngFromTree(charRate.get(0), charCode, 0);
+        return charCode;
     }
 
     public HashMap<Character, String> getCharCode(ArrayList<HuffmanTreeNode> charRate) {
@@ -51,11 +93,21 @@ public class Huffman {
             if (charRate.size() == 0) {
                 charRate.add(newNode);
             }
-
         }
         HashMap<Character, String> charCode = new HashMap<>();
         codeFromTree(charRate.get(0), charCode, "");
         return charCode;
+    }
+
+    public void lngFromTree(HuffmanTreeNode tree, HashMap<Character, Integer> charLeng, int deep) {
+        if (tree != null) {
+            if (tree.left == null && tree.right == null) {
+                charLeng.put(tree.getStr().charAt(0), deep);
+            } else {
+                lngFromTree(tree.left, charLeng, deep + 1);
+                lngFromTree(tree.right, charLeng, deep + 1);
+            }
+        }
     }
 
     public void codeFromTree(HuffmanTreeNode tree, HashMap<Character, String> charCode, String str) {
@@ -74,7 +126,7 @@ public class Huffman {
         for (char value : charCode.keySet()) {
             CodesLengthArray.add(new HuffmanTreeNode(String.valueOf(value), (charCode.get(value).length())));
         }
-      return   canonicalHuffman(CodesLengthArray);
+        return canonicalHuffman(CodesLengthArray);
     }
 
     public HashMap<String, Character> canonicalHuffman(ArrayList<HuffmanTreeNode> charLength) {
@@ -105,29 +157,33 @@ public class Huffman {
     }
 
     public void codingInFile(String str, String Path) {
-        HashMap<Character, String> charCode = getCodeCanonicForStr(str);
 
+
+        HashMap<Character, String> charCode = getCodeCanonicForStr(str);
         StringBuilder output = new StringBuilder();
+
         for (int i = 0; i < str.length(); i++) {
             output.append(charCode.get(str.charAt(i)));
         }
         try {
             FileWriter writer = new FileWriter(Path, false);
             //запись алфавита
+
             writer.append((char) charCode.size());
+
             writer.flush();
             for (Map.Entry<Character, String> entry : charCode.entrySet()) {
                 writer.append(entry.getKey());
+
                 writer.flush();
                 writer.append((char) entry.getValue().length());
                 writer.flush();
             }
-
             int i = 0;
-            while (i + 15 <= output.length()) {
+            while (i + 7 <= output.length()) {
                 int myChar = 0;
-                for (int j = 0; j < 15; j++, i++) {
-                    myChar = myChar << 1;
+                for (int j = 0; j < 7; j++, i++) {
+                    myChar <<= 1;
                     myChar += output.charAt(i) == '1' ? 1 : 0;
                 }
 
@@ -137,31 +193,38 @@ public class Huffman {
             int myChar = 0;
 
             for (; i < output.length(); i++) {
-                myChar = myChar << 1;
+                myChar <<= 1;
                 myChar += output.charAt(i) == '1' ? 1 : 0;
             }
 
-            if (myChar>0){writer.append((char) myChar);}
+            if (myChar > 0) {
+                writer.append((char) myChar);
+            }
+
+
             writer.flush();
+            writer.close();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
         }
-   }
+    }
 
     public HashMap<Character, String> getCodeCanonicForStr(String str) {
-        HashMap<Character, String> charCode =getCodeTree(str);
+
+        HashMap<Character, Integer> CharLng = getCodeLengForTree(str);
+
         ArrayList<HuffmanTreeNode> charLength = new ArrayList<>();
-        for (Character character : charCode.keySet()) {
+        for (Character character : CharLng.keySet()) {
             int ch = character;
-            int num = charCode.get(character).length();
+            int num = CharLng.get(character);
             charLength.add(new HuffmanTreeNode("" + (char) ch, num));
         }
-        HashMap<String,Character > charCodeCanon = canonicalHuffman(charLength);
-        charCode=new HashMap<>();
+        HashMap<String, Character> charCodeCanon = canonicalHuffman(charLength);
+        HashMap<Character, String> charCode = new HashMap<>();
         for (String s : charCodeCanon.keySet()) {
-            charCode.put(charCodeCanon.get(s),s);
+            charCode.put(charCodeCanon.get(s), s);
         }
-        return  (charCode);
+        return (charCode);
     }
 
     public String decoding(String Path) {
@@ -178,16 +241,16 @@ public class Huffman {
 
             StringBuilder strBinarDeCompress = new StringBuilder();
             StringBuilder strDeCompress = new StringBuilder();
-            int last=0;
+            int last = 0;
             while ((c = reader.read()) != -1) {
-                strBinarDeCompress.append(String.format("%15s", Integer.toBinaryString(c)).replace(' ', '0'));
-                last=c;
+                strBinarDeCompress.append(String.format("%7s", Integer.toBinaryString(c)).replace(' ', '0'));
+                last = c;
             }
-            strBinarDeCompress.delete(strBinarDeCompress.length()-15,strBinarDeCompress.length());
+            strBinarDeCompress.delete(strBinarDeCompress.length() - 7, strBinarDeCompress.length());
 
             strBinarDeCompress.append(Integer.toBinaryString(last));
             StringBuilder code = new StringBuilder();
-             for (int i = 0; i < strBinarDeCompress.length(); i++) {
+            for (int i = 0; i < strBinarDeCompress.length(); i++) {
                 code.append(strBinarDeCompress.charAt(i));
 
                 if (charCode.containsKey(code.toString())) {
@@ -202,4 +265,10 @@ public class Huffman {
             throw new RuntimeException(e);
         }
     }
+
+    void time() {
+        System.out.println(System.currentTimeMillis() - start);
+        start = System.currentTimeMillis();
+    }
+
 }

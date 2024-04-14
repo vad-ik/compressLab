@@ -202,6 +202,7 @@ public class ArithmeticCoding {
         ArrayList<Character> alphabet = Stats.getAlphabet(str.toString());
         HashMap<Character, Integer> charRate = Stats.getChareRate(str.toString());
 
+
         alphabet.add('\n');
         charRate.put('\n', 1);
         int size = str.length();

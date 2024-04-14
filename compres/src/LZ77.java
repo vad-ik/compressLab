@@ -41,7 +41,7 @@ public class LZ77 {
              }
             charCoded++;
 
-            if (charCoded == 15) {
+            if (charCoded == 7) {
                 strCompress.append((char) type);//запишим типы кодов
                 charCoded = 0;
                 type = 0;
@@ -51,7 +51,7 @@ public class LZ77 {
             }
         }
         if (charCoded != 0) {
-            type = type << 15 - charCoded;//чтобы при дешифрации не было особого случая
+            type = type << 7 - charCoded;//чтобы при дешифрации не было особого случая
             strCompress.append((char) type);//запишим типы кодов
 
             strCompress.append(memory);
@@ -68,7 +68,7 @@ public class LZ77 {
         while (!strEnd && j < size) {
             int types = str.charAt(j);
             j++;
-            for (int i = 14; i >= 0 && !strEnd; i--, j++) {
+            for (int i = 6; i >= 0 && !strEnd; i--, j++) {
 
 
                 if (j < size) {

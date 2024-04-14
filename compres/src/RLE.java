@@ -23,7 +23,7 @@ public class RLE {
             int amount = 1;
             for (int i = 0; i < str.length() - 1; i++) {
 
-                if (str.charAt(i) == str.charAt(i+1) && amount < 255) {
+                if (str.charAt(i) == str.charAt(i+1) && amount < 256) {
                     amount++;
                 } else {
 
