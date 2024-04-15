@@ -1,11 +1,5 @@
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 
 public class Huffman {
     Long start;
@@ -156,7 +150,8 @@ public class Huffman {
 
     }
 
-    public void codingInFile(String str, String Path) {
+
+    public void codingInFileToBit(String str, String path) {
 
 
         HashMap<Character, String> charCode = getCodeCanonicForStr(str);
@@ -165,30 +160,32 @@ public class Huffman {
         for (int i = 0; i < str.length(); i++) {
             output.append(charCode.get(str.charAt(i)));
         }
-        try {
-            FileWriter writer = new FileWriter(Path, false);
-            //запись алфавита
 
-            writer.append((char) charCode.size());
+        // запись в файл
+        try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(path))) {
+            // записываем значения
 
-            writer.flush();
+            dos.writeShort(charCode.size());//для алфовита мение 65536, но больший не поддерживает java
+
+            dos.flush();
             for (Map.Entry<Character, String> entry : charCode.entrySet()) {
-                writer.append(entry.getKey());
+                dos.writeChar(entry.getKey());
 
-                writer.flush();
-                writer.append((char) entry.getValue().length());
-                writer.flush();
+                dos.flush();
+                dos.writeByte(entry.getValue().length() );//если код больше 256, будут проблему, но там и с алфовитом будут проблемы
+                dos.flush();
             }
             int i = 0;
-            while (i + 7 <= output.length()) {
+            while (i + 8 <= output.length()) {
                 int myChar = 0;
-                for (int j = 0; j < 7; j++, i++) {
+                for (int j = 0; j < 8; j++, i++) {
                     myChar <<= 1;
                     myChar += output.charAt(i) == '1' ? 1 : 0;
                 }
 
-                writer.append((char) myChar);
-                writer.flush();
+                dos.writeByte(myChar );
+
+                dos.flush();
             }
             int myChar = 0;
 
@@ -198,14 +195,58 @@ public class Huffman {
             }
 
             if (myChar > 0) {
-                writer.append((char) myChar);
+                dos.writeByte(myChar );
             }
-
-
-            writer.flush();
-            writer.close();
+            dos.flush();
+            dos.close();
         } catch (IOException ex) {
             System.out.println(ex.getMessage());
+        }
+    }
+
+    public String decodingBit(String path) {
+
+        try {
+            DataInputStream dos = new DataInputStream(new FileInputStream(path));
+            int c = dos.readShort();
+            ArrayList<HuffmanTreeNode> charLength = new ArrayList<>();
+            for (int i = 0; i < c; i++) {
+                int ch = dos.readChar();
+                int num = dos.readByte();
+                charLength.add(new HuffmanTreeNode("" + (char) ch, num));
+            }
+            HashMap<String, Character> charCode = canonicalHuffman(charLength);
+
+            StringBuilder strBinarDeCompress = new StringBuilder();
+            StringBuilder strDeCompress = new StringBuilder();
+            int last = 0;
+            while (dos.available() > 0) {
+                //while (c!=-2) {
+                c = dos.readByte() ;
+                if (c<0){
+                    c+=256;
+                }
+                strBinarDeCompress.append(String.format("%8s", Integer.toBinaryString(c)).replace(' ', '0'));
+                last = c;
+            }
+            strBinarDeCompress.delete(strBinarDeCompress.length() - 8, strBinarDeCompress.length());
+
+            strBinarDeCompress.append(Integer.toBinaryString(last));
+
+            StringBuilder code = new StringBuilder();
+            for (int i = 0; i < strBinarDeCompress.length(); i++) {
+                code.append(strBinarDeCompress.charAt(i));
+
+                if (charCode.containsKey(code.toString())) {
+                    strDeCompress.append(charCode.get(code.toString()));
+                    code = new StringBuilder();
+                }
+            }
+            return strDeCompress.toString();
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -225,45 +266,6 @@ public class Huffman {
             charCode.put(charCodeCanon.get(s), s);
         }
         return (charCode);
-    }
-
-    public String decoding(String Path) {
-        try {
-            FileReader reader = new FileReader(Path);
-            int c = reader.read();
-            ArrayList<HuffmanTreeNode> charLength = new ArrayList<>();
-            for (int i = 0; i < c; i++) {
-                int ch = reader.read();
-                int num = reader.read();
-                charLength.add(new HuffmanTreeNode("" + (char) ch, num));
-            }
-            HashMap<String, Character> charCode = canonicalHuffman(charLength);
-
-            StringBuilder strBinarDeCompress = new StringBuilder();
-            StringBuilder strDeCompress = new StringBuilder();
-            int last = 0;
-            while ((c = reader.read()) != -1) {
-                strBinarDeCompress.append(String.format("%7s", Integer.toBinaryString(c)).replace(' ', '0'));
-                last = c;
-            }
-            strBinarDeCompress.delete(strBinarDeCompress.length() - 7, strBinarDeCompress.length());
-
-            strBinarDeCompress.append(Integer.toBinaryString(last));
-            StringBuilder code = new StringBuilder();
-            for (int i = 0; i < strBinarDeCompress.length(); i++) {
-                code.append(strBinarDeCompress.charAt(i));
-
-                if (charCode.containsKey(code.toString())) {
-                    strDeCompress.append(charCode.get(code.toString()));
-                    code = new StringBuilder();
-                }
-            }
-            return strDeCompress.toString();
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     void time() {
